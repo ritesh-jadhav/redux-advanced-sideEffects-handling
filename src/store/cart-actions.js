@@ -1,6 +1,5 @@
 import { uiSliceActions } from "./ui-slice";
-import {cartActions} from './cart-slice';
-
+import { cartActions } from "./cart-slice";
 
 export const fetchCartData = () => {
   return async (dispatch) => {
@@ -17,7 +16,10 @@ export const fetchCartData = () => {
     };
     try {
       const cartData = await fetchData();
-      dispatch(cartActions.replaceCart(cartData));
+      dispatch(cartActions.replaceCart({
+          items: cartData.items || [],
+          totalQuantity: cartData.totalQuantity,
+      }));
     } catch (error) {
       dispatch(
         uiSliceActions.showNotification({
@@ -45,7 +47,10 @@ export const sendCartData = (cart) => {
         "https://redux-product-store-default-rtdb.firebaseio.com/cart.json",
         {
           method: "PUT",
-          body: JSON.stringify(cart),
+          body: JSON.stringify({
+            items: cart.items,
+            totalQuantity: cart.totalQuantity,
+          }),
         }
       );
 
